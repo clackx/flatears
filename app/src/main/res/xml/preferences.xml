@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen
+  xmlns:android="http://schemas.android.com/apk/res/android">
+  <PreferenceCategory
+      android:title="Параметры записи">
+    <CheckBoxPreference
+      android:key="PREF_RECORD_CALLS"
+      android:title="Записывать разговоры"
+      android:summary="Включение автоматической записи разговоров"
+      android:defaultValue="true"
+    />
+    <ListPreference
+     android:key="PREF_AUDIO_SOURCE"
+     android:title="Источник аудио"
+     android:summary="Выбор системного устройства или потока"
+     android:entries="@array/audio_source_options"
+     android:entryValues="@array/audio_source_values"
+     android:dialogTitle="Audio source"
+     android:defaultValue="1"
+    />
+    <ListPreference
+      android:key="PREF_AUDIO_FORMAT"
+      android:title="Формат записи аудио"
+      android:summary="Выбор формата для хранения записей"
+      android:entries="@array/audio_format_options"
+      android:entryValues="@array/audio_format_values"
+      android:dialogTitle="Audio format"
+      android:defaultValue="1"
+    />
+  </PreferenceCategory>
+  <PreferenceCategory
+      android:title="Параметры хранения">
+    <CheckBoxPreference
+        android:key="PREF_SAVE_RECORDS"
+        android:title="Выгружать записи"
+        android:summary="Включение автоматической выгрузки записей на сервер обработки"
+        android:defaultValue="true"
+        />
+    <CheckBoxPreference
+        android:key="PREF_AUTOCHECK"
+        android:title="Выбирать наилучший"
+        android:summary="Включение автоматического выбора сервера на основе времени отклика"
+        android:defaultValue="true"
+        />
+    <EditTextPreference
+        android:key="PREF_SERVER_IP"
+        android:title="Адрес сервера"
+        android:summary="Выбор дрес сервера выгрузки"
+        android:defaultValue="10.10.10.10" />
+    <EditTextPreference
+        android:key="PREF_SERVER_TYPE"
+        android:title="Тип сервера"
+        android:summary="Ну или что-нибудь ещё"
+        android:defaultValue="***" />
+  </PreferenceCategory>
+</PreferenceScreen>
