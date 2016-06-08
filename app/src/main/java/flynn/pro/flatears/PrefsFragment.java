@@ -13,6 +13,10 @@ import android.view.ViewGroup;
  */
 public class PrefsFragment extends Fragment {
 
+    static public final String PREF_RECORD_CALLS = "PREF_RECORD_CALLS";
+    static public final String PREF_AUDIO_SOURCE = "PREF_AUDIO_SOURCE";
+    static public final String PREF_AUDIO_FORMAT = "PREF_AUDIO_FORMAT";
+
 
     public PrefsFragment() {
         // Required empty public constructor

@@ -1,6 +1,7 @@
 package flynn.pro.flatears;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -10,9 +11,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -70,6 +73,9 @@ public class MainActivity extends AppCompatActivity {
                         .setAction("Action", null).show();
             }
         });
+
+        NetworkUtil.updateStatus(getApplicationContext());
+        runnable.run();
 
     }
 
@@ -145,5 +151,26 @@ public class MainActivity extends AppCompatActivity {
             }
             return null;
         }
+
+
     }
+
+    private Handler thandler = new Handler();
+
+    // :: TIMER START ? HERE
+    private  Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            if (NetworkUtil.allowUpload) {
+                Log.d("TIMERHANDLER ::", "UPLOAD ALL NOW!!");
+                FTPUploader._uploadall();
+            }
+            // :: make some noise
+            Toast.makeText(MainActivity.this, "Tick!!! - TUCK !!", Toast.LENGTH_LONG).show();
+            //CallLog cl = CallLog.xx;
+            //DetectConnection.checkInternetConnection(context);
+            // :: Pause ten second to next connection check
+            thandler.postDelayed(this, 60000);
+        }
+    };
 }
