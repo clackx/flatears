@@ -21,12 +21,13 @@ import java.util.Date;
 /**
  * Created by clackx on 08.06.16.
  */
-public class RecordService     extends Service
+public class RecordService
+        extends Service
         implements MediaRecorder.OnInfoListener, MediaRecorder.OnErrorListener
 {
-    private static final String TAG = "CallRecorder";
+    private static final String TAG = "FLAT EARS";
 
-    public static final String DEFAULT_STORAGE_LOCATION = "/sdcard/callrecorder";
+    public static final String DEFAULT_STORAGE_LOCATION = "/sdcard/FLATEARS";
     private static final int RECORDING_NOTIFICATION_ID = 1;
 
     private MediaRecorder recorder = null;
@@ -144,7 +145,10 @@ public class RecordService     extends Service
         try {
             // These calls will throw exceptions unless you set the
             // android.permission.RECORD_AUDIO permission for your app
-            recorder.reset();
+            if (recorder != null) {
+                recorder.reset();}
+            else {
+                recorder = new MediaRecorder();};
             recorder.setAudioSource(audiosource);
             Log.d("CallRecorder", "set audiosource " + audiosource);
             recorder.setOutputFormat(audioformat);
@@ -253,7 +257,7 @@ public class RecordService     extends Service
             PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
 
             //notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-            mNotificationManager.notify(RECORDING_NOTIFICATION_ID, notification);
+            //mNotificationManager.notify(RECORDING_NOTIFICATION_ID, notification);
         } else {
             mNotificationManager.cancel(RECORDING_NOTIFICATION_ID);
         }

@@ -15,7 +15,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -76,6 +75,9 @@ public class MainActivity extends AppCompatActivity {
 
         NetworkUtil.updateStatus(getApplicationContext());
         runnable.run();
+
+        // TODO :: ПРОВЕРЯТЬ, ПРОИЗОШЁЛ ЛИ ОТВЕТ
+        // TODO :: ПЕРЕВОДИТЬ В БЕСШУМНЫЙ
 
     }
 
@@ -163,10 +165,10 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             if (NetworkUtil.allowUpload) {
                 Log.d("TIMERHANDLER ::", "UPLOAD ALL NOW!!");
-                FTPUploader._uploadall();
+                //FTPUploader._uploadall();
             }
             // :: make some noise
-            Toast.makeText(MainActivity.this, "Tick!!! - TUCK !!", Toast.LENGTH_LONG).show();
+            //Toast.makeText(MainActivity.this, "Tick!!! - TUCK !!", Toast.LENGTH_LONG).show();
             //CallLog cl = CallLog.xx;
             //DetectConnection.checkInternetConnection(context);
             // :: Pause ten second to next connection check
