@@ -14,7 +14,7 @@ public class BootCompleteReceiver extends BroadcastReceiver {
         if (intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
 
             // :: IF BOOT COMPLETED - CHECK REACH SERVERS
-            NetworkUtil.updateStatus(context);
+            //NetworkUtil.updateStatus(context);
             // TODO:: START APP MINIMIZED
 
         }

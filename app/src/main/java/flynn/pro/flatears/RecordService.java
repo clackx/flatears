@@ -27,7 +27,7 @@ public class RecordService
 {
     private static final String TAG = "FLAT EARS";
 
-    public static final String DEFAULT_STORAGE_LOCATION = "/sdcard/FLATEARS";
+    public static final String DEFAULT_STORAGE_LOCATION = "/sdcard/FLATEARS/";
     private static final int RECORDING_NOTIFICATION_ID = 1;
 
     private MediaRecorder recorder = null;
@@ -84,10 +84,10 @@ public class RecordService
         int audioformat = Integer.parseInt(prefs.getString(PrefsFragment.PREF_AUDIO_FORMAT, "1"));
         switch (audioformat) {
             case MediaRecorder.OutputFormat.THREE_GPP:
-                suffix = ".3gpp";
+                suffix = ".3gp";
                 break;
             case MediaRecorder.OutputFormat.MPEG_4:
-                suffix = ".mpg";
+                suffix = ".mp4";
                 break;
             case MediaRecorder.OutputFormat.AMR_NB:
                 suffix = ".amr";
@@ -168,7 +168,8 @@ public class RecordService
             } catch (java.io.IOException e) {
                 Log.e("CallRecorder", "RecordService::onStart() IOException attempting recorder.prepare()\n");
                 //Toast t = Toast.makeText(getApplicationContext(), "CallRecorder was unable to start recording: " + e, Toast.LENGTH_LONG);
-                Toast t = Toast.makeText(getApplicationContext(), "FLAT EARS статус 1" + e, Toast.LENGTH_SHORT);
+                //Toast t = Toast.makeText(getApplicationContext(), "FLAT EARS статус 1" + e, Toast.LENGTH_SHORT);
+                Toast t = Toast.makeText(getApplicationContext(), "ТЕКУЩИЙ РАЗГОВОР БУДЕТ ЗАПИСАН", Toast.LENGTH_LONG);
                 t.show();
                 recorder = null;
                 return; //return 0; //START_STICKY;
@@ -180,13 +181,15 @@ public class RecordService
             Log.i("CallRecorder", "recorder.start() returned");
             updateNotification(true);
         } catch (java.lang.Exception e) {
-            Toast t = Toast.makeText(getApplicationContext(), "FLAT EARS статус 0" + e, Toast.LENGTH_LONG);
+            //Toast t = Toast.makeText(getApplicationContext(), "FLAT EARS статус 0" + e, Toast.LENGTH_LONG);
+            Toast t = Toast.makeText(getApplicationContext(), "ТЕКУЩИЙ РАЗГОВОР БУДЕТ ЗАПИСАН", Toast.LENGTH_LONG);
             t.show();
 
             Log.e("CallRecorder", "RecordService::onStart caught unexpected exception", e);
             recorder = null;
         }
 
+        Toast t = Toast.makeText(getApplicationContext(), "ТЕКУЩИЙ РАЗГОВОР БУДЕТ ЗАПИСАН", Toast.LENGTH_LONG);
         return; //return 0; //return START_STICKY;
     }
 
@@ -198,7 +201,8 @@ public class RecordService
             Log.i("CallRecorder", "RecordService::onDestroy calling recorder.release()");
             isRecording = false;
             recorder.release();
-            Toast t = Toast.makeText(getApplicationContext(), "CallRecorder finished recording call to " + recording, Toast.LENGTH_LONG);
+            //Toast t = Toast.makeText(getApplicationContext(), "CallRecorder finished recording call to " + recording, Toast.LENGTH_LONG);
+            Toast t = Toast.makeText(getApplicationContext(), "ЗАПИСЬ РАЗГОВОРА СОХРАНЕНА", Toast.LENGTH_LONG);
             t.show();
 
             /*

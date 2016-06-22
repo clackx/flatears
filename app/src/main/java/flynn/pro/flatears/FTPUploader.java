@@ -1,6 +1,5 @@
 package flynn.pro.flatears;
 
-import android.os.Environment;
 import android.util.Log;
 
 import org.apache.commons.net.ftp.FTP;
@@ -84,41 +83,35 @@ public class FTPUploader {
         new Thread(new Runnable() {
             public void run() {
                 boolean connectstatus = false;
-                connectstatus = ftpclient.ftpConnect("10.77.5.39", "ftp", "ftp", 21);
-                if (connectstatus == true) {
-                    Log.d(TAG, "Connection Success");
-                    // :: START UPLOAD ALL WHEN CONNECTION SUCCESS
-                    boolean status = false;
-                    File dir = new File(RecordService.DEFAULT_STORAGE_LOCATION);
-                    String[] dlist = dir.list();
+                boolean status = false;
+                String dpath = RecordService.DEFAULT_STORAGE_LOCATION;
+                File dir = new File(dpath);
+                String[] dlist = dir.list();
 
-                    for (int i = 0; i < dlist.length; i++) {
-                        status = ftpclient.ftpUpload(
-                                Environment.getExternalStorageDirectory()
-                                        + "/CallREcorder/" + dlist[i],
-                                dlist[i], "/");
-                        if (status == true) {
-                            Log.d(TAG, "Upload file " + dlist[i] + " success :)");
-                            //handler.sendEmptyMessage(2);
-                        } else {
-                            Log.d(TAG, "Upload file " + dlist[i] + " failed :(");
-                            //handler.sendEmptyMessage(-1);
+                // :: if files exists
+                if (dlist.length > 0) {
+                    connectstatus = ftpclient.ftpConnect("10.34.200.118", "ftp", "ftp", 21);
+                    if (connectstatus == true) {
+                        Log.d(TAG, "Connection Success");
+                        // :: START UPLOAD ALL WHEN CONNECTION SUCCESS
+
+
+                        for (int i = 0; i < dlist.length; i++) {
+                            status = ftpclient.ftpUpload(dpath + dlist[i], dlist[i], "/");
+                            if (status == true) {
+                                Log.d(TAG, "Upload file " + dlist[i] + " success :)");
+                                boolean deleted = (new File(dpath, dlist[i])).delete();
+                                //handler.sendEmptyMessage(2);
+                            } else {
+                                Log.d(TAG, "Upload file " + dlist[i] + " failed :(");
+                                //handler.sendEmptyMessage(-1);
+                            }
                         }
+                        //handler.sendEmptyMessage(0);
+                    } else {
+                        Log.d(TAG, "Connection failed");
+                        //handler.sendEmptyMessage(-1);
                     }
-
-                /* status = ftpclient.ftpUpload(
-                        Environment.getExternalStorageDirectory()
-                                + "/CallREcorder/" + TEMP_FILENAME,
-                        TEMP_FILENAME, "/", cntx);
-                        */
-
-
-
-
-                    //handler.sendEmptyMessage(0);
-                } else {
-                    Log.d(TAG, "Connection failed");
-                    //handler.sendEmptyMessage(-1);
                 }
             }
         }).start();
