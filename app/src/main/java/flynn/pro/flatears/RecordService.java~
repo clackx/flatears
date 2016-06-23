@@ -4,16 +4,12 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaRecorder;
-import android.net.Uri;
-import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
-import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -21,26 +17,22 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.prefs.Preferences;
 
 /**
  * Created by clackx on 08.06.16.
  */
-public class RecordService 
-    extends Service
-    implements MediaRecorder.OnInfoListener, MediaRecorder.OnErrorListener
+public class RecordService
+        extends Service
+        implements MediaRecorder.OnInfoListener, MediaRecorder.OnErrorListener
 {
-    private static final String TAG = "CallRecorder";
+    private static final String TAG = "FLAT EARS";
 
-    public static final String DEFAULT_STORAGE_LOCATION = Environment.getExternalStorageDirectory().getPath()+"/FLATEARS";
+    public static final String DEFAULT_STORAGE_LOCATION = "/sdcard/FLATEARS/";
     private static final int RECORDING_NOTIFICATION_ID = 1;
 
     private MediaRecorder recorder = null;
     private boolean isRecording = false;
     private File recording = null;;
-
-    String rowID;
-    Long tStart, tFinish;
 
     /*
     private static void test() throws java.security.NoSuchAlgorithmException
@@ -78,56 +70,30 @@ public class RecordService
 
         // test size
 
-        // :: GET DEVICE HARDWARE IDS TO INSERT INTO DB
-        TelephonyManager telemamanger = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        String getSimSerialNumber = telemamanger.getSimSerialNumber();
-        String getSimNumber = telemamanger.getLine1Number();
-        String getDeviceID = telemamanger.getDeviceId();
-        String getAndroidID =  android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-        String prefix = getSimSerialNumber;
+        // create filename based on call data
+        //String prefix = "call";
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss-SS");
+        String prefix = sdf.format(new Date());
 
-        cv.put(RecordingProvider.KEY_ANUM, getSimNumber);
-        cv.put(RecordingProvider.KEY_DEVID, getDeviceID);
-        cv.put(RecordingProvider.KEY_ANDROIDID, getAndroidID);
-
-
-        // :: ADD SOURCE
+        // add info to file name about what audio channel we were recording
         int audiosource = Integer.parseInt(prefs.getString(PrefsFragment.PREF_AUDIO_SOURCE, "1"));
-        prefix += "-" + audiosource + "-" + new Date().getTime();
-        switch (audiosource) {
-            case 1:
-                //suffix = ".3gpp";
-                cv.put(RecordingProvider.KEY_SOURCE, "MIC");
-                break;
-            case 2:
-                //suffix = ".mpg";
-                cv.put(RecordingProvider.KEY_SOURCE, "LINE");
-                break;
-            default: {
-                cv.put(RecordingProvider.KEY_SOURCE, ""+audiosource);
-            }
-        }
+        prefix += "-channel" + audiosource + "-";
 
-
-        // :: ADD FORMAT
+        // create suffix based on format
         String suffix = "";
         int audioformat = Integer.parseInt(prefs.getString(PrefsFragment.PREF_AUDIO_FORMAT, "1"));
         switch (audioformat) {
-        case MediaRecorder.OutputFormat.THREE_GPP:
-            suffix = ".3gpp";
-            cv.put(RecordingProvider.KEY_FORMAT, "3GPP");
-            break;
-        case MediaRecorder.OutputFormat.MPEG_4:
-            suffix = ".mpg";
-            cv.put(RecordingProvider.KEY_FORMAT, "MPEG4");
-            break;
-        case MediaRecorder.OutputFormat.AMR_NB:
-            suffix = ".amr";
-            cv.put(RecordingProvider.KEY_FORMAT, "AMR");
-            break;
+            case MediaRecorder.OutputFormat.THREE_GPP:
+                suffix = ".3gp";
+                break;
+            case MediaRecorder.OutputFormat.MPEG_4:
+                suffix = ".mp4";
+                break;
+            case MediaRecorder.OutputFormat.AMR_NB:
+                suffix = ".amr";
+                break;
         }
 
-        // :: CREATE TEMP FILE
         try {
             return File.createTempFile(prefix, suffix, dir);
         } catch (IOException e) {
@@ -146,15 +112,15 @@ public class RecordService
     }
 
     public void onStart(Intent intent, int startId) {
-        Log.i("CallRecorder", "RecordService::onStart calling through to onStartCommand");
-        onStartCommand(intent, 0, startId);
-        }
+        //Log.i("CallRecorder", "RecordService::onStart calling through to onStartCommand");
+        //onStartCommand(intent, 0, startId);
+        //}
 
-        public int onStartCommand(Intent intent, int flags, int startId)
-        {
+        //public int onStartCommand(Intent intent, int flags, int startId)
+        //{
         Log.i("CallRecorder", "RecordService::onStartCommand called while isRecording:" + isRecording);
 
-        if (isRecording) return 0;
+        if (isRecording) return;
 
         Context c = getApplicationContext();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
@@ -163,7 +129,7 @@ public class RecordService
         if (!shouldRecord) {
             Log.i("CallRecord", "RecordService::onStartCommand with PREF_RECORD_CALLS false, not recording");
             //return START_STICKY;
-            return 0;
+            return;
         }
 
         int audiosource = Integer.parseInt(prefs.getString(PrefsFragment.PREF_AUDIO_SOURCE, "1"));
@@ -172,14 +138,17 @@ public class RecordService
         recording = makeOutputFile(prefs);
         if (recording == null) {
             recorder = null;
-            return 0; //return 0;
+            return; //return 0;
         }
 
         Log.i("CallRecorder", "RecordService will config MediaRecorder with audiosource: " + audiosource + " audioformat: " + audioformat);
         try {
-            // These calls will throw exceptions unless you set the 
+            // These calls will throw exceptions unless you set the
             // android.permission.RECORD_AUDIO permission for your app
-            recorder.reset();
+            if (recorder != null) {
+                recorder.reset();}
+            else {
+                recorder = new MediaRecorder();};
             recorder.setAudioSource(audiosource);
             Log.d("CallRecorder", "set audiosource " + audiosource);
             recorder.setOutputFormat(audioformat);
@@ -193,17 +162,17 @@ public class RecordService
 
             recorder.setOnInfoListener(this);
             recorder.setOnErrorListener(this);
-            
+
             try {
                 recorder.prepare();
             } catch (java.io.IOException e) {
                 Log.e("CallRecorder", "RecordService::onStart() IOException attempting recorder.prepare()\n");
                 //Toast t = Toast.makeText(getApplicationContext(), "CallRecorder was unable to start recording: " + e, Toast.LENGTH_LONG);
                 //Toast t = Toast.makeText(getApplicationContext(), "FLAT EARS статус 1" + e, Toast.LENGTH_SHORT);
-                Toast t = Toast.makeText(getApplicationContext(), "! ТЕКУЩИЙ РАЗГОВОР БУДЕТ ЗАПИСАН !", Toast.LENGTH_LONG);
+                Toast t = Toast.makeText(getApplicationContext(), "ТЕКУЩИЙ РАЗГОВОР БУДЕТ ЗАПИСАН", Toast.LENGTH_LONG);
                 t.show();
                 recorder = null;
-                return 0; //return 0; //START_STICKY;
+                return; //return 0; //START_STICKY;
             }
             Log.d("CallRecorder", "recorder.prepare() returned");
 
@@ -213,34 +182,16 @@ public class RecordService
             updateNotification(true);
         } catch (java.lang.Exception e) {
             //Toast t = Toast.makeText(getApplicationContext(), "FLAT EARS статус 0" + e, Toast.LENGTH_LONG);
-            Toast t = Toast.makeText(getApplicationContext(), "ТЕКУЩИЙ РАЗГОВОР !! БУДЕТ ЗАПИСАН", Toast.LENGTH_LONG);
+            Toast t = Toast.makeText(getApplicationContext(), "ТЕКУЩИЙ РАЗГОВОР БУДЕТ ЗАПИСАН", Toast.LENGTH_LONG);
             t.show();
 
             Log.e("CallRecorder", "RecordService::onStart caught unexpected exception", e);
             recorder = null;
         }
 
-        //SimpleDateFormat sdf = new SimpleDateFormat("E, dd.MM.yyyy HH:mm:ss");
-        //String dbDate = sdf.format(new Date());
-        tStart = new Date().getTime();
-
-            String incoming = (String) intent.getExtras().get("incomingNumber");
-
-        //cv.put(RecordingProvider.KEY_ID,"1");
-        cv.put(RecordingProvider.KEY_LINTIME, ""+new Date().getTime());
-        if ( incoming != "") {
-            cv.put(RecordingProvider.KEY_BNUM, incoming);}
-        cv.put(RecordingProvider.KEY_LINK, recording.getName());
-
-        Uri uri = getContentResolver().insert(RecordingProvider.CONTENT_URI, cv);
-        rowID = uri.getLastPathSegment();
-
-        return 0; //return 0; //return START_STICKY;
+        Toast t = Toast.makeText(getApplicationContext(), "ТЕКУЩИЙ РАЗГОВОР БУДЕТ ЗАПИСАН", Toast.LENGTH_LONG);
+        return; //return 0; //return START_STICKY;
     }
-
-    RecordingProvider rp = new RecordingProvider();
-    ContentValues cv = new ContentValues();
-
 
     public void onDestroy()
     {
@@ -250,7 +201,8 @@ public class RecordService
             Log.i("CallRecorder", "RecordService::onDestroy calling recorder.release()");
             isRecording = false;
             recorder.release();
-            Toast t = Toast.makeText(getApplicationContext(), "CallRecorder finished recording call to " + recording, Toast.LENGTH_LONG);
+            //Toast t = Toast.makeText(getApplicationContext(), "CallRecorder finished recording call to " + recording, Toast.LENGTH_LONG);
+            Toast t = Toast.makeText(getApplicationContext(), "ЗАПИСЬ РАЗГОВОРА СОХРАНЕНА", Toast.LENGTH_LONG);
             t.show();
 
             /*
@@ -264,20 +216,6 @@ public class RecordService
             }
             //encrypt(recording);
             */
-        }
-
-
-        // :: CALCULATE DURATION
-        tFinish = new Date().getTime();
-        long tD = tFinish - tStart;
-        cv.put(RecordingProvider.KEY_DURATION, tD);
-
-        // :: UPDATE LAST ROW
-        String where = RecordingProvider.KEY_ID + "=" + rowID;
-        int ex = getContentResolver().update(RecordingProvider.CONTENT_URI, cv, where, null);
-
-        if (ex != 0) {
-            Log.e("CallRecorder", "RecordService::onDestroy SQL update failed: "+ex);
         }
 
         updateNotification(false);
@@ -313,12 +251,15 @@ public class RecordService
             int icon = R.drawable.rec;
             CharSequence tickerText = "Recording call from channel " + prefs.getString(PrefsFragment.PREF_AUDIO_SOURCE, "1");
             long when = System.currentTimeMillis();
+
             Notification notification = new Notification(icon, tickerText, when);
+
             Context context = getApplicationContext();
             CharSequence contentTitle = "CallRecorder Status";
             CharSequence contentText = "Recording call from channel...";
             Intent notificationIntent = new Intent(this, RecordService.class);
             PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+
             //notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
             //mNotificationManager.notify(RECORDING_NOTIFICATION_ID, notification);
         } else {

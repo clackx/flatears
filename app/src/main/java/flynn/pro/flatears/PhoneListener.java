@@ -35,6 +35,7 @@ public class PhoneListener extends PhoneStateListener
             case TelephonyManager.CALL_STATE_OFFHOOK:
                 Log.d("CallRecorder", "CALL_STATE_OFFHOOK starting recording");
                 Intent callIntent = new Intent(context, RecordService.class);
+                callIntent.putExtra("incomingNumber", incomingNumber);
                 ComponentName name = context.startService(callIntent);
                 if (null == name) {
                     Log.e("CallRecorder", "startService for RecordService returned null ComponentName");
