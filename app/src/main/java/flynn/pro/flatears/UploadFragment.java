@@ -27,6 +27,7 @@ import java.io.File;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 
 
 /**
@@ -143,11 +144,17 @@ public class UploadFragment extends Fragment {
         }
 
         if (cLT != "") {
-            SimpleDateFormat sdf_date = new SimpleDateFormat("dd.MM HH:mm");
-            //cDat = sdf_date.format(DateFormat())
+            SimpleDateFormat sdf_date = new SimpleDateFormat("E, dd MMM HH:mm");
+            Date nDate = new Date(Long.parseLong(cLT));
+            cDat = sdf_date.format(nDate);
         }
 
-        if (cNum == "") {cNum = "????????????";}
+        if (Objects.equals(cNum, "")) {cNum = "????????????";}
+        if (Objects.equals(cTyp, "")) {cTyp = "     unknown";}
+        if (cNum == null) {cNum = "????????????";}
+        if (cTyp == null) {cTyp = "     unknown"; cDur = ""+(Integer.parseInt(cDur)/1000);}
+        if (cNum == "null") {cNum = "????????????";}
+
         String s= cNum+" "+cTyp+" \n"+cDat+"   ( "+cDur+" сек. )";
         SpannableString ss1=  new SpannableString(s);
         ss1.setSpan(new RelativeSizeSpan(1.2f), 0, 12, 0); // set size
