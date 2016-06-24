@@ -54,7 +54,8 @@ public class HistoryObserver extends ContentObserver {
     private void getCalldetailsNow() {
         // TODO Auto-generated method stub
 
-        Cursor managedCursor = context.getContentResolver().query(android.provider.CallLog.Calls.CONTENT_URI, null, null, null, android.provider.CallLog.Calls.DATE + " DESC");
+        Cursor managedCursor = context.getContentResolver().
+                query(android.provider.CallLog.Calls.CONTENT_URI, null, null, null, android.provider.CallLog.Calls.DATE + " DESC");
 
         int number = managedCursor.getColumnIndex(android.provider.CallLog.Calls.NUMBER);
         int duration1 = managedCursor.getColumnIndex(android.provider.CallLog.Calls.DURATION);

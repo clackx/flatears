@@ -147,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
                 case 0:
                     return "ИНФО";
                 case 1:
-                    return "НАСТРОЙКИ";
+                    return "ОПЦИИ";
                 case 2:
                     return "ЗАПИСИ";
             }
