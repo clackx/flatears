@@ -3,12 +3,16 @@ package flynn.pro.flatears;
 
 import android.Manifest;
 import android.app.Dialog;
+import android.content.ComponentName;
 import android.content.ContentValues;
+import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.text.SpannableString;
@@ -36,8 +40,9 @@ import java.util.Objects;
 public class UploadFragment extends Fragment {
 
     public static final String BASE_PATH = "content://flynn.pro.flatears/records";
+    public static final String DEFAULT_STORAGE_LOCATION = Environment.getExternalStorageDirectory().getPath()+"/FLATEARS";
+    private static final String TAG = "UPLOADFRGMNT";
     private ViewGroup mContainerView;
-    String[] dlist;
     Dialog dialog;
     TextView showBtn, cancelBtn;
 
@@ -90,14 +95,15 @@ public class UploadFragment extends Fragment {
 
         if (dlist != null) {
             for (int i = 0; i < dlist.length; i++) {
-                addItem(dlist[dlist.length - i - 1]);
+                //addItem(dlist[dlist.length - i - 1]);
+                addItem(dlist[i]);
             }
         }
 
     }
 
 
-    private void addItem(String name) {
+    private void addItem(final String name) {
         // Instantiate a new "row" view.
         final ViewGroup newView = (ViewGroup) LayoutInflater.from(this.getContext()).inflate(
                 R.layout.list_item_example, mContainerView, false);
@@ -149,10 +155,10 @@ public class UploadFragment extends Fragment {
             cDat = sdf_date.format(nDate);
         }
 
-        if (Objects.equals(cNum, "")) {cNum = "????????????";}
-        if (Objects.equals(cTyp, "")) {cTyp = "     unknown";}
+        if (Objects.equals(cNum, "")) {cNum = " неизвестный";}
+        if (Objects.equals(cTyp, "")) {cTyp = "   unknown";}
         if (cNum == null) {cNum = "????????????";}
-        if (cTyp == null) {cTyp = "     unknown"; cDur = ""+(Integer.parseInt(cDur)/1000);}
+        if (cTyp == null) {cTyp = "   unknown"; cDur = ""+(Integer.parseInt(cDur)/1000);}
         if (cNum == "null") {cNum = "????????????";}
 
         String s= cNum+" "+cTyp+" \n"+cDat+"   ( "+cDur+" сек. )";
@@ -184,6 +190,8 @@ public class UploadFragment extends Fragment {
         newView.findViewById(R.id.delete_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                playFile(name);
+                /*
                 // Remove the row from its parent (the container view).
                 // Because mContainerView has android:animateLayoutChanges set to true,
                 // this removal is automatically animated.
@@ -198,6 +206,7 @@ public class UploadFragment extends Fragment {
                     //newView.getRootView().findViewById(android.R.id.empty).setVisibility(View.INVISIBLE);
                     //((TextView)view.findViewById(android.R.id.empty)).setText("XXX");
                 }
+                */
             }
         });
 
@@ -267,11 +276,27 @@ public class UploadFragment extends Fragment {
     }
 
 
+    private void playFile(String fName) {
+        Log.i(TAG, "playFile: " + fName);
 
+        //Context context = this.getContext();
+        /*
+        Context context = getActivity().getApplicationContext();
+        Intent playIntent = new Intent(context, PlayService.class);
+        playIntent.putExtra(PlayService.EXTRA_FILENAME, RecordService.DEFAULT_STORAGE_LOCATION + "/" + fName);
+        ComponentName name = context.startService(playIntent);
+        if (null == name) {
+            Log.w(TAG, "Unable to start PlayService with intent: " + playIntent.toString());
+        } else {
+            Log.i(TAG, "Started service: " + name);
+        }
+        */
 
+        Intent playIntent = new Intent(getActivity().getApplicationContext(), CallPlayer.class); //Intent.ACTION_VIEW);
+        Uri uri = Uri.parse(DEFAULT_STORAGE_LOCATION+"/"+fName); //fromFile(fName);
+        playIntent.setData(uri);
+        startActivity(playIntent);
 
-
-
-
+    }
 
 }

@@ -45,6 +45,17 @@
         </receiver>
 
         <service android:name=".RecordService" />
+        <service android:name=".PlayService" />
+
+        <activity
+            android:name=".CallPlayer"
+            android:label="CallPlayer">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+
+                <data android:mimeType="audio/*" />
+            </intent-filter>
+        </activity>
 
     </application>
 

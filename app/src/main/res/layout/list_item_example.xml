@@ -39,7 +39,7 @@
     <ImageButton android:id="@+id/delete_button"
         android:layout_width="60dp"
         android:layout_height="match_parent"
-        android:src="@drawable/ic_list_remove"
+        android:src="@drawable/play_sm"
         android:background="?android:selectableItemBackground"
         android:contentDescription="@string/action_remove_item" />
 
