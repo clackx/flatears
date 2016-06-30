@@ -8,11 +8,13 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.media.MediaRecorder;
 import android.net.Uri;
 import android.os.Environment;
 import android.os.IBinder;
 import android.preference.PreferenceManager;
+import android.support.v4.app.NotificationCompat;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -21,6 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Objects;
 import java.util.prefs.Preferences;
 
 /**
@@ -38,6 +41,10 @@ public class RecordService
     private MediaRecorder recorder = null;
     private boolean isRecording = false;
     private File recording = null;;
+
+    String incoming;
+
+    public static final int NOTIFICATION_ID = 1;
 
     String rowID;
     Long tStart, tFinish;
@@ -143,6 +150,8 @@ public class RecordService
         super.onCreate();
         recorder = new MediaRecorder();
         Log.i("CallRecorder", "onCreate created MediaRecorder object");
+
+        updateNotification ("IDLE", "");
     }
 
     public void onStart(Intent intent, int startId) {
@@ -210,7 +219,7 @@ public class RecordService
             recorder.start();
             isRecording = true;
             Log.i("CallRecorder", "recorder.start() returned");
-            updateNotification(true);
+            updateNotification("RECSTART", "");
         } catch (java.lang.Exception e) {
             //Toast t = Toast.makeText(getApplicationContext(), "FLAT EARS статус 0" + e, Toast.LENGTH_LONG);
             Toast t = Toast.makeText(getApplicationContext(), "ТЕКУЩИЙ РАЗГОВОР !! БУДЕТ ЗАПИСАН", Toast.LENGTH_LONG);
@@ -224,7 +233,7 @@ public class RecordService
         //String dbDate = sdf.format(new Date());
         tStart = new Date().getTime();
 
-            String incoming = (String) intent.getExtras().get("incomingNumber");
+        incoming = (String) intent.getExtras().get("incomingNumber");
 
         //cv.put(RecordingProvider.KEY_ID,"1");
         cv.put(RecordingProvider.KEY_LINTIME, ""+new Date().getTime());
@@ -280,7 +289,7 @@ public class RecordService
             Log.e("CallRecorder", "RecordService::onDestroy SQL update failed: "+ex);
         }
 
-        updateNotification(false);
+        updateNotification("RECDONE", ""+recording);
     }
 
 
@@ -301,29 +310,61 @@ public class RecordService
     }
 
 
-    private void updateNotification(Boolean status)
+    private void updateNotification(String status, String filename)
     {
         Context c = getApplicationContext();
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
 
-        String ns = Context.NOTIFICATION_SERVICE;
-        NotificationManager mNotificationManager = (NotificationManager) getSystemService(ns);
+        NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
+        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_notify));
+        builder.setContentTitle("FLAT|EARS : запись звонков");
+        builder.setOngoing(true); // :: permanent Notification
 
-        if (status) {
-            int icon = R.drawable.rec;
-            CharSequence tickerText = "Recording call from channel " + prefs.getString(PrefsFragment.PREF_AUDIO_SOURCE, "1");
-            long when = System.currentTimeMillis();
-            Notification notification = new Notification(icon, tickerText, when);
-            Context context = getApplicationContext();
-            CharSequence contentTitle = "CallRecorder Status";
-            CharSequence contentText = "Recording call from channel...";
-            Intent notificationIntent = new Intent(this, RecordService.class);
-            PendingIntent contentIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
-            //notification.setLatestEventInfo(context, contentTitle, contentText, contentIntent);
-            //mNotificationManager.notify(RECORDING_NOTIFICATION_ID, notification);
-        } else {
-            mNotificationManager.cancel(RECORDING_NOTIFICATION_ID);
+        if (Objects.equals(status, "IDLE")) {
+
+            builder.setSmallIcon(R.drawable.icn_pref);
+            builder.setContentText("Разговор будет записан");
+            builder.setSubText("Нажмите для настройки");
+
         }
+
+        if (Objects.equals(status, "RECDONE")) {
+
+            Intent playIntent = new Intent(c, CallPlayer.class); //Intent.ACTION_VIEW);
+            Uri uri = Uri.parse(filename);
+            playIntent.setData(uri);
+            playIntent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);//not recommend
+            startActivity(playIntent);
+
+            PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, playIntent, 0);
+            builder.setContentIntent(pendingIntent);
+            builder.setSmallIcon(R.drawable.icn_play);
+            builder.setContentText("ЗАПИСЬ ЗАВЕРШЕНА");
+            builder.setSubText("Нажмите, чтобы прослушать");
+
+            status = "IDLE";
+        }
+
+        if (Objects.equals(status, "RECSTART")) {
+
+            builder.setSmallIcon(R.drawable.icn_norm);
+            builder.setContentText("ПРОИЗВОДИТСЯ ЗАПИСЬ");
+            builder.setSubText("Разговор с абонентом " + incoming);
+
+        }
+
+        // Set the notification to auto-cancel. This means that the notification will disappear
+        // after the user taps it, rather than remaining until it's explicitly dismissed.
+        //builder.setAutoCancel(true);
+
+        //builder.setContentText("Канал источник: " + prefs.getString(PrefsFragment.PREF_AUDIO_SOURCE, "1") + " :: " + when + "сек");
+
+        NotificationManager notificationManager = (NotificationManager) getSystemService(
+                NOTIFICATION_SERVICE);
+        notificationManager.notify(NOTIFICATION_ID, builder.build());
+
+
+
     }
 
     // MediaRecorder.OnInfoListener
@@ -331,6 +372,8 @@ public class RecordService
     {
         Log.i("CallRecorder", "RecordService got MediaRecorder onInfo callback with what: " + what + " extra: " + extra);
         isRecording = false;
+
+        updateNotification ("IDLE", "");
     }
 
     // MediaRecorder.OnErrorListener
@@ -339,5 +382,7 @@ public class RecordService
         Log.e("CallRecorder", "RecordService got MediaRecorder onError callback with what: " + what + " extra: " + extra);
         isRecording = false;
         mr.release();
+
+        updateNotification ("IDLE", "");
     }
 }

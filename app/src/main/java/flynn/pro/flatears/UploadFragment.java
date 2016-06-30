@@ -156,10 +156,7 @@ public class UploadFragment extends Fragment {
         }
 
         if (Objects.equals(cNum, "")) {cNum = " неизвестный";}
-        if (Objects.equals(cTyp, "")) {cTyp = "   unknown";}
-        if (cNum == null) {cNum = "????????????";}
-        if (cTyp == null) {cTyp = "   unknown"; cDur = ""+(Integer.parseInt(cDur)/1000);}
-        if (cNum == "null") {cNum = "????????????";}
+        if (Objects.equals(cTyp, "")) {cTyp = "   unknown"; cDur = ""+(Integer.parseInt(cDur)/1000);}
 
         String s= cNum+" "+cTyp+" \n"+cDat+"   ( "+cDur+" сек. )";
         SpannableString ss1=  new SpannableString(s);
