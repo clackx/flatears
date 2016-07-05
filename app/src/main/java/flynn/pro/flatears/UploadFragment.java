@@ -129,7 +129,7 @@ public class UploadFragment extends Fragment {
         Cursor mCursor = getActivity().getApplicationContext().getContentResolver().query(Uri.parse(BASE_PATH), null, where, null, null);
 
         String ctype = "";
-        String cDat="", cNum="", cDur = "", cLT = "", cTyp="";
+        String cDat="", cNum="", cDur = "", cLT = "", cTyp="", cSrc="", cFrm="";
 
         // Some providers return null if an error occurs, others throw an exception
         if (null == mCursor) {
@@ -146,6 +146,8 @@ public class UploadFragment extends Fragment {
              cDur = mCursor.getString(7);
             cLT = mCursor.getString(1);
             cTyp = mCursor.getString(4);
+            cSrc = mCursor.getString(8);
+            cFrm = mCursor.getString(9);
 
         }
 
@@ -213,10 +215,12 @@ public class UploadFragment extends Fragment {
         final String finalCDat = cDat;
         final String finalCNum = cNum;
         final String finalCDur = cDur;
+        final String finalCSrc = cSrc;
+        final String finalCFrm = cFrm;
         newView.findViewById(R.id.callname).setOnClickListener(new View.OnClickListener() {
                @Override
                public void onClick(View view) {
-                   showDialog(finalCDat, finalCNum, finalCDur);
+                   showDialog(finalCNum, finalCDat, finalCSrc, finalCFrm, finalCDur, name);
                }
            });
 
@@ -260,14 +264,21 @@ public class UploadFragment extends Fragment {
         cancelBtn= (TextView) dialog.findViewById(R.id.cancelTxt);
     }
 
-    private void showDialog(String dDate, String dNum, String dDur)
+    private void showDialog(String dNum, String dDate, String dSrc, String dFrm, String dDur, String dFnm)
     {
         TextView tvNum = (TextView)dialog.findViewById(R.id.txtNum);
         TextView tvDat = (TextView)dialog.findViewById(R.id.txtDate);
-        TextView tvDet = (TextView)dialog.findViewById(R.id.txtDetails);
+        TextView tvSrc = (TextView)dialog.findViewById(R.id.txtSource);
+        TextView tvFrm = (TextView)dialog.findViewById(R.id.txtFormat);
+        TextView tvDur = (TextView)dialog.findViewById(R.id.txtDetails);
+        TextView tvFnm = (TextView)dialog.findViewById(R.id.txtFilename);
         tvNum.setText(dNum);
         tvDat.setText(dDate);
-        tvDet.setText("Продолжительность: "+dDur+"c");
+        tvSrc.setText("Источник : "+dSrc);
+        tvFrm.setText("Формат : "+dFrm);
+        tvDur.setText("Продолжительность: "+dDur+"c");
+        tvFnm.setText("Файл: "+dFnm);
+
 
         dialog.show();
     }

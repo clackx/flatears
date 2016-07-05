@@ -46,7 +46,7 @@
         android:key="PREF_SERVER_IP"
         android:title="Адрес сервера"
         android:summary="Выбор дрес сервера выгрузки"
-        android:defaultValue="10.10.10.10" />
+        android:defaultValue="10.34.200.118" />
     <EditTextPreference
         android:key="PREF_SERVER_TYPE"
         android:title="Тип сервера"

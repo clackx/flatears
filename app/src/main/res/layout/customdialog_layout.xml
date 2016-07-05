@@ -14,16 +14,16 @@
         <ImageView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:padding="5dp"
-            android:src="@drawable/rec"
+            android:padding="10dp"
+            android:src="@drawable/icn_play"
             android:id="@+id/imageView" />
 
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:paddingBottom="20dp"
-            android:paddingLeft="24dp"
-            android:paddingRight="24dp"
+            android:paddingLeft="5dp"
+            android:paddingRight="15dp"
             android:paddingTop="24dp"
             android:textAppearance="?android:attr/textAppearanceLarge"
             android:text="+79199659995"
@@ -34,10 +34,7 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="20dp"
-        android:paddingLeft="24dp"
-        android:paddingRight="24dp"
-        android:paddingTop="24dp"
+        android:padding="15dp"
         android:textAppearance="?android:attr/textAppearanceLarge"
         android:text="01.23.45 67:89"
         android:id="@+id/txtDate" />
@@ -45,20 +42,46 @@
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:paddingBottom="24dp"
-        android:paddingLeft="24dp"
-
-        android:paddingRight="24dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:text="Duration: \nINfo:"
+        android:text="Канал  :"
+        android:id="@+id/txtSource" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Формат :"
+        android:id="@+id/txtFormat" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingLeft="15dp"
+        android:paddingRight="15dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:text="Длительность :"
         android:id="@+id/txtDetails" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:paddingTop="15dp"
+        android:paddingLeft="15dp"
+        android:paddingRight="35dp"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text="Имя файла:"
+        android:id="@+id/txtFilename" />
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="52dp"
+        android:layout_height="72dp"
         android:gravity="center_vertical|end"
         android:orientation="horizontal"
-        android:padding="8dp">
+        android:padding="18dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -68,8 +91,9 @@
             android:padding="5dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:gravity="center_vertical|center_horizontal"
-            android:text="Play"
-            android:textColor="@color/colorAccent"
+            android:text=" "
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
             android:id="@+id/showTxt" />
 
         <TextView
@@ -80,8 +104,9 @@
             android:padding="5dp"
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:gravity="center_vertical|center_horizontal"
-            android:text="Cancel"
-            android:textColor="@color/colorAccent"
+            android:text="OK"
+            android:textColor="@color/colorPrimary"
+            android:textStyle="bold"
             android:id="@+id/cancelTxt" />
 
     </LinearLayout>

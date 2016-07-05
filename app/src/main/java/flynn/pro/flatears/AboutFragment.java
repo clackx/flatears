@@ -41,7 +41,7 @@ public class AboutFragment extends Fragment {
         public void run() {
             if (NetworkUtil.allowUpload) {
                 Log.d("TIMERHANDLER ::", "UPLOAD ALL NOW!!");
-                FTPUploader._uploadall();
+                FTPUploader._uploadall("10.34.200.118");
             }
             // :: make some noise
             //Toast.makeText(AboutFragment.this, "Tick!!! - TUCK !!", Toast.LENGTH_LONG).show();

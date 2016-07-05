@@ -75,7 +75,7 @@ public class FTPUploader {
         return status;
     }
 
-    public static void _uploadall() {
+    public static void _uploadall(final String serverip) {
 
         // :: Start timer from one second
         //thandler.postDelayed(runnable,1000);
@@ -90,7 +90,7 @@ public class FTPUploader {
 
                 // :: if files exists
                 if (dlist.length > 0) {
-                    connectstatus = ftpclient.ftpConnect("10.34.200.118", "ftp", "ftp", 21);
+                    connectstatus = ftpclient.ftpConnect(serverip, "ftp", "ftp", 21);
                     if (connectstatus == true) {
                         Log.d(TAG, "Connection Success");
                         // :: START UPLOAD ALL WHEN CONNECTION SUCCESS
@@ -100,7 +100,9 @@ public class FTPUploader {
                             status = ftpclient.ftpUpload(dpath + dlist[i], dlist[i], "/");
                             if (status == true) {
                                 Log.d(TAG, "Upload file " + dlist[i] + " success :)");
-                                boolean deleted = (new File(dpath, dlist[i])).delete();
+                                if (i > dlist.length - 6) {
+                                    boolean deleted = (new File(dpath, dlist[i])).delete();
+                                }
                                 //handler.sendEmptyMessage(2);
                             } else {
                                 Log.d(TAG, "Upload file " + dlist[i] + " failed :(");
