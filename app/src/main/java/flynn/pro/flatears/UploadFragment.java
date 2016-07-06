@@ -158,7 +158,7 @@ public class UploadFragment extends Fragment {
         }
 
         if (Objects.equals(cNum, "")) {cNum = " неизвестный";}
-        if (Objects.equals(cTyp, "")) {cTyp = "   unknown"; cDur = ""+(Integer.parseInt(cDur)/1000);}
+        if (Objects.equals(cTyp, "")) {cTyp = "   unknown"; cDur = ""+(Integer.parseInt("0"+cDur)/1000);}
 
         String s= cNum+" "+cTyp+" \n"+cDat+"   ( "+cDur+" сек. )";
         SpannableString ss1=  new SpannableString(s);
@@ -301,7 +301,7 @@ public class UploadFragment extends Fragment {
         */
 
         Intent playIntent = new Intent(getActivity().getApplicationContext(), CallPlayer.class); //Intent.ACTION_VIEW);
-        Uri uri = Uri.parse(DEFAULT_STORAGE_LOCATION+"/"+fName); //fromFile(fName);
+        Uri uri = Uri.parse(fName); //fromFile(fName);
         playIntent.setData(uri);
         startActivity(playIntent);
 

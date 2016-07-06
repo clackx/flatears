@@ -9,7 +9,7 @@ import android.widget.MediaController;
  */
 public class AudioPlayerControl     implements MediaController.MediaPlayerControl
 {
-    private static final String TAG = "CallRecorder";
+    private static final String TAG = "AUPLYRCNTRL";
 
     private MediaPlayer player = null;
     private String path = null;
