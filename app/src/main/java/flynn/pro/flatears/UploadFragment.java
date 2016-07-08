@@ -40,7 +40,6 @@ import java.util.Objects;
 public class UploadFragment extends Fragment {
 
     public static final String BASE_PATH = "content://flynn.pro.flatears/records";
-    public static final String DEFAULT_STORAGE_LOCATION = Environment.getExternalStorageDirectory().getPath()+"/FLATEARS";
     private static final String TAG = "UPLOADFRGMNT";
     private ViewGroup mContainerView;
     Dialog dialog;

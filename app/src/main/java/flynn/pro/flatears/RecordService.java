@@ -289,7 +289,8 @@ public class RecordService
             Log.e("CallRecorder", "RecordService::onDestroy SQL update failed: "+ex);
         }
 
-        updateNotification("RECDONE", ""+recording);
+        String tname = recording.getName();
+        updateNotification("RECDONE", tname);
     }
 
 
@@ -318,7 +319,7 @@ public class RecordService
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.ic_notify));
         builder.setContentTitle("FLAT|EARS : запись звонков");
-        builder.setOngoing(true); // :: permanent Notification
+        //builder.setOngoing(true); // :: permanent Notification
 
         if (Objects.equals(status, "IDLE")) {
 

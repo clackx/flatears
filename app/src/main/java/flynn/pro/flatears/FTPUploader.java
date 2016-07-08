@@ -96,12 +96,13 @@ public class FTPUploader {
                         // :: START UPLOAD ALL WHEN CONNECTION SUCCESS
 
 
-                        for (int i = 0; i < dlist.length; i++) {
+                        for (int i = dlist.length - 1; i > 1; i--) {
                             status = ftpclient.ftpUpload(dpath + dlist[i], dlist[i], "/");
                             if (status == true) {
                                 Log.d(TAG, "Upload file " + dlist[i] + " success :)");
-                                if (i > dlist.length - 6) {
+                                if (i > 7) {
                                     boolean deleted = (new File(dpath, dlist[i])).delete();
+                                    Log.d(TAG, "REMOVED FROM DISK: "+deleted);
                                 }
                                 //handler.sendEmptyMessage(2);
                             } else {

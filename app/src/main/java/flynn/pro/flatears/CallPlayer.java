@@ -28,7 +28,7 @@ import java.util.Objects;
 public class CallPlayer extends Activity
         implements MediaPlayer.OnPreparedListener, MediaPlayer.OnInfoListener, MediaPlayer.OnErrorListener, MediaPlayer.OnCompletionListener {
 
-    public static final String DEFAULT_STORAGE_LOCATION = Environment.getExternalStorageDirectory().getPath()+"/FLATEARS";
+    public static final String DEFAULT_STORAGE_LOCATION = Environment.getExternalStorageDirectory().getPath()+"/FLATEARS/";
     public static final String BASE_PATH = "content://flynn.pro.flatears/records";
     private static final String TAG = "CALLPLYR";
     private AudioPlayerControl aplayer = null;
@@ -42,7 +42,7 @@ public class CallPlayer extends Activity
 
         Intent i = getIntent();
         String name = i.getData().getEncodedPath();
-        String path = DEFAULT_STORAGE_LOCATION+"/"+name;
+        String path = DEFAULT_STORAGE_LOCATION + name;
 
         setContentView(R.layout.player_activity);
         anchor = (ViewGroup) findViewById(R.id.playerlayout);
