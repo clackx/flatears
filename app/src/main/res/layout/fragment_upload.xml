@@ -32,4 +32,10 @@
         android:text="@string/message_empty_layout_changes_blank"
         android:textColor="?android:textColorSecondary" />
 
+    <TextView
+        android:id="@+id/response"
+        android:layout_gravity="bottom"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"/>
+
 </FrameLayout>

@@ -39,17 +39,10 @@ public class HistoryObserver extends ContentObserver {
     public void onChange(boolean selfChange) {
         // TODO Auto-generated method stub
         super.onChange(selfChange);
-        /*
-        SharedPreferences sp = context.getSharedPreferences("ZnSoftech", Activity.MODE_PRIVATE);
-        String number = sp.getString("number", null);
-        if (number != null) {
-            getCalldetailsNow();
-            sp.edit().putString("number", null).commit();
-        }
-        */
 
         getCalldetailsNow();
     }
+
 
     private void getCalldetailsNow() {
         // TODO Auto-generated method stub
@@ -86,41 +79,31 @@ public class HistoryObserver extends ContentObserver {
                     break;
             }
 
-            SimpleDateFormat sdf_date = new SimpleDateFormat("dd.MM.yyyy");
-            SimpleDateFormat sdf_time = new SimpleDateFormat("HH:mm");
-            // SimpleDateFormat sdf_dur = new SimpleDateFormat("KK:mm:ss");
+            if (dir != "MISSED") {
+                SimpleDateFormat sdf_date = new SimpleDateFormat("dd.MM.yyyy");
+                SimpleDateFormat sdf_time = new SimpleDateFormat("HH:mm");
 
-            String dateString = sdf_date.format(new Date(Long.parseLong(date)));
-            String timeString = sdf_time.format(new Date(Long.parseLong(date)));
-            //  String duration_new=sdf_dur.format(new Date(Long.parseLong(callDuration)));0
+                String dateString = sdf_date.format(new Date(Long.parseLong(date)));
+                String timeString = sdf_time.format(new Date(Long.parseLong(date)));
 
-            ContentValues cv = new ContentValues();
-            cv.put(RecordingProvider.KEY_CALLTYPE, dir);
-            cv.put(RecordingProvider.KEY_BNUM, phNumber);
-            cv.put(RecordingProvider.KEY_DURATION, callDuration);
-            cv.put(RecordingProvider.KEY_DATE, dateString);
-            cv.put(RecordingProvider.KEY_TIME, timeString);
-            //String where = RecordingProvider.KEY_ID + "=" + rowID;
+                ContentValues cv = new ContentValues();
+                cv.put(RecordingProvider.KEY_CALLTYPE, dir);
+                cv.put(RecordingProvider.KEY_BNUM, phNumber);
+                cv.put(RecordingProvider.KEY_DURATION, callDuration);
+                cv.put(RecordingProvider.KEY_DATE, dateString);
+                cv.put(RecordingProvider.KEY_TIME, timeString);
 
+                Cursor mCursor = context.getContentResolver().query(Uri.parse(BASE_PATH), null, null, null, null);
+                mCursor.moveToLast();
+                int id = mCursor.getInt(mCursor.getColumnIndex("_id"));
+                String where = RecordingProvider.KEY_ID + " = " + id;
+                int ex = context.getContentResolver().update(RecordingProvider.CONTENT_URI, cv, where, null);
 
-            Cursor mCursor = context.getContentResolver().query(Uri.parse(BASE_PATH), null, null, null, null);
-            //mCursor.getColumnCount();
-            //int id = mCursor.getInt(0);
-            mCursor.moveToLast();
-            int id = mCursor.getInt(mCursor.getColumnIndex("_id"));
-            String where = RecordingProvider.KEY_ID + " = " + id;
-            int ex = context.getContentResolver().update(RecordingProvider.CONTENT_URI, cv, where, null);
-
-            if (ex != 0) {
-                Log.e("HISTOBSRVR", "getCalldetails:: SQL update failed: " + ex);
+                if (ex != 0) {
+                    Log.e("HISTOBSRVR", "Ошибка обновления данных таблицы записей");
+                }
             }
-
-            //DBHelper db=new DBHelper(c, "ZnSoftech.db", null, 2);
-            //db.insertdata(phNumber, dateString, timeString, callDuration, dir);
-
         }
-
         managedCursor.close();
     }
-
 }

@@ -3,21 +3,11 @@
   <string-array name="audio_source_options">
     <item>MIC</item>
     <item>VOICE_CALL</item>
-    <item>VOICE_UPLINK</item>
-    <item>VOICE_DOWNLINK</item>
-    <item>CAMCORDER</item>
-    <item>VOICE_RECOGNITION</item>
-    <item>VOICE_COMMUNICATION</item>
   </string-array>
 
   <string-array name="audio_source_values">
     <item>1</item>
     <item>4</item>
-    <item>2</item>
-    <item>3</item>
-    <item>5</item>
-    <item>6</item>
-    <item>7</item>
   </string-array>
 
   <string-array name="audio_format_options">

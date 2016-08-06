@@ -1,8 +1,12 @@
 package flynn.pro.flatears;
 
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
+import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,7 +19,7 @@ import android.view.ViewGroup;
  */
 public class AboutFragment extends Fragment {
 
-    private Handler thandler = new Handler();
+    private Handler thandler = new Handler(Looper.getMainLooper());
 
     public static AboutFragment newInstance() {
         AboutFragment fragment = new AboutFragment();
@@ -36,16 +40,19 @@ public class AboutFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_about, container, false);
     }
 
+
     private  Runnable runnable = new Runnable() {
         @Override
         public void run() {
             if (NetworkUtil.allowUpload) {
-                Log.d("TIMERHANDLER ::", "UPLOAD ALL NOW!!");
-                FTPUploader._uploadall("10.34.200.118");
+                Log.d("TIMERHNDLR", "Процедура выгрузки инициирована по таймеру");
+
+                Context c = getActivity().getBaseContext();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+                String serverip = prefs.getString(PrefsFragment.PREF_SERVER_IP, "1");
+                FTPUploader._uploadall(serverip);
             }
-            // :: make some noise
-            //Toast.makeText(AboutFragment.this, "Tick!!! - TUCK !!", Toast.LENGTH_LONG).show();
-            //CallLog cl = CallLog.xx;
+
             //DetectConnection.checkInternetConnection(context);
             // :: Pause ten second to next connection check
             thandler.postDelayed(this, 60000);

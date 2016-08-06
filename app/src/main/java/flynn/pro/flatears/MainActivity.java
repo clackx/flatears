@@ -1,7 +1,10 @@
 package flynn.pro.flatears;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
 import android.support.design.widget.TabLayout;
@@ -68,14 +71,18 @@ public class MainActivity extends AppCompatActivity {
         fab.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-                FTPUploader._uploadall("10.34.200.118");
+                Snackbar.make(view, "Инициирована процедура выгрузки данных", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+                Log.d("MAINACTVTY", "Процедура выгрузки инициирована кнопкой");
+                Context c = getBaseContext();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+                String serverip = prefs.getString(PrefsFragment.PREF_SERVER_IP, "1");
+                FTPUploader._uploadall(serverip);
             }
         });
 
         NetworkUtil.updateStatus(getApplicationContext());
-        runnable.run();
+        //runnable.run();
 
         // TODO :: ПРОВЕРЯТЬ, ПРОИЗОШЁЛ ЛИ ОТВЕТ
         // TODO :: ПЕРЕВОДИТЬ В БЕСШУМНЫЙ
@@ -158,22 +165,4 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private Handler thandler = new Handler();
-
-    // :: TIMER START ? HERE
-    private  Runnable runnable = new Runnable() {
-        @Override
-        public void run() {
-            if (NetworkUtil.allowUpload) {
-                Log.d("TIMERHANDLER ::", "UPLOAD ALL NOW!!");
-                //FTPUploader._uploadall();
-            }
-            // :: make some noise
-            //Toast.makeText(MainActivity.this, "Tick!!! - TUCK !!", Toast.LENGTH_LONG).show();
-            //CallLog cl = CallLog.xx;
-            //DetectConnection.checkInternetConnection(context);
-            // :: Pause ten second to next connection check
-            thandler.postDelayed(this, 60000);
-        }
-    };
 }

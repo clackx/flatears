@@ -16,16 +16,7 @@
      android:entries="@array/audio_source_options"
      android:entryValues="@array/audio_source_values"
      android:dialogTitle="Audio source"
-     android:defaultValue="1"
-    />
-    <ListPreference
-      android:key="PREF_AUDIO_FORMAT"
-      android:title="Формат записи аудио"
-      android:summary="Выбор формата для хранения записей"
-      android:entries="@array/audio_format_options"
-      android:entryValues="@array/audio_format_values"
-      android:dialogTitle="Audio format"
-      android:defaultValue="1"
+     android:defaultValue="4"
     />
   </PreferenceCategory>
   <PreferenceCategory
@@ -45,7 +36,7 @@
     <EditTextPreference
         android:key="PREF_SERVER_IP"
         android:title="Адрес сервера"
-        android:summary="Выбор дрес сервера выгрузки"
+        android:summary="Ввод ip-адреса сервера выгрузки"
         android:defaultValue="10.34.200.118" />
     <EditTextPreference
         android:key="PREF_SERVER_TYPE"
