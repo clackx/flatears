@@ -339,30 +339,23 @@ public class RecordService
         String getSimSerialNumber = telemamanger.getSimSerialNumber();
         String getDeviceID = telemamanger.getDeviceId();
         String getAndroidID =  android.provider.Settings.Secure.getString(getContentResolver(), android.provider.Settings.Secure.ANDROID_ID);
-
-        cv.put(RecordingProvider.KEY_LINTIME, new Date().getTime());
-        cv.put(RecordingProvider.KEY_ANUM, getSimSerialNumber);
-        cv.put(RecordingProvider.KEY_DEVID, getDeviceID);
-        cv.put(RecordingProvider.KEY_ANDROIDID, getAndroidID);
-        cv.put(RecordingProvider.KEY_FORMAT, "WAV");
+        String source;
 
         switch (audiosource) {
             case 1:
-                cv.put(RecordingProvider.KEY_SOURCE, "MIC");
+                source = "MIC";
                 break;
             case 4:
-                cv.put(RecordingProvider.KEY_SOURCE, "LINE");
+                source = "LINE";
                 break;
             default: {
-                cv.put(RecordingProvider.KEY_SOURCE, ""+audiosource);
+                source = ""+audiosource;
             }
         }
 
         cv.put(RecordingProvider.KEY_LINK, getFilename());
-
-        Uri uri = getContentResolver().insert(RecordingProvider.CONTENT_URI, cv);
-        rowID = uri.getLastPathSegment();
-        Log.i("FLATEARS", "Добавлена запись с индексом " + rowID);
+        DatabaseHelper db =  DatabaseHelper.getInstance(getApplicationContext());
+        db.addInitial(""+(new Date().getTime()), getSimSerialNumber, getDeviceID, getAndroidID, source, ""+cv.get(RecordingProvider.KEY_LINK));
 
     }
 

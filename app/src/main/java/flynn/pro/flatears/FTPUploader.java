@@ -4,6 +4,7 @@ import android.app.Application;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.os.Looper;
 import android.util.Log;
@@ -14,13 +15,15 @@ import org.apache.commons.net.ftp.FTPReply;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created by clackx on 08.06.16.
  */
 public class FTPUploader  {
     public FTPClient mFTPClient = null;
-    public static final String TAG = "FTPUPLOADR";
+    public static final String TAG = "FTPUPLDR";
 
     static  FTPUploader ftpclient = new FTPUploader();
 
@@ -80,12 +83,13 @@ public class FTPUploader  {
         return status;
     }
 
-    public static void _uploadall(final String serverip) {
+    public static void _uploadall(final String serverip, Context context) {
 
-        //TODO:: ПРОВЕРЯТЬ ТЕКУЩИЙ СТАТУС ВЫГРУЗКИ
-        // :: Start timer from one second
-        //thandler.postDelayed(runnable,1000);
+        final DatabaseHelper db = DatabaseHelper.getInstance(context);
+        Map< String, String > map = new HashMap< String, String >();
+        map = db.getStates();
 
+        final Map<String, String> finalMap = map;
         new Thread(new Runnable() {
             public void run() {
                 Looper.prepare();
@@ -95,6 +99,7 @@ public class FTPUploader  {
                 String dpath = RecordService.DEFAULT_STORAGE_LOCATION;
                 File dir = new File(dpath);
                 String[] dlist = dir.list();
+                String state;
 
                 if (dlist == null) {
                     Log.e(TAG, "Рабочая директория не найдена");
@@ -108,22 +113,32 @@ public class FTPUploader  {
                         // :: START UPLOAD ALL WHEN CONNECTION SUCCESS
                         //for (int i = dlist.length - 1; i > 1; i--) {
                         for (int i = 1; i < dlist.length - 1; i++) {
-                            status = ftpclient.ftpUpload(dpath + dlist[i], dlist[i], "/");
-                            if (status == true) {
-                                Log.d(TAG, "Успешная выгрузка файла " + dlist[i]);
-                                //sql.updateSQL(dlist[i],"UPLOADED");
-                                if (i < dlist.length - 7)
-                                    if ((new File(dpath, dlist[i])).delete()) {
-                                        Log.d(TAG, "Успешное удаление файла " + dlist[i]);
-                                        //sql.updateSQL(dlist[i],"DELETED");
-                                    }
-                                //handler.sendEmptyMessage(2);
-                            } else {
-                                Log.d(TAG, "Выгрузка файла " + dlist[i] + " не удалась");
-                                //sql.updateSQL(dlist[i],"FAILED");
-                                //handler.sendEmptyMessage(-1);
+                            state = ""+finalMap.get(dlist[i]);
+                            Log.e(TAG, dlist[i] + "  ::  " + state);
+                            if (!state.equals("UPLOADED")) {
+                                status = ftpclient.ftpUpload(dpath + dlist[i], dlist[i], "/");
+                                if (status == true) {
+                                    Log.d(TAG, "Успешная выгрузка файла " + dlist[i]);
+                                    state = "UPLOADED";
+                                    if (i < dlist.length - 7)
+                                        if ((new File(dpath, dlist[i])).delete()) {
+                                            Log.d(TAG, "Успешное удаление файла " + dlist[i]);
+                                            state = "DELETED";
+                                        }
+                                    //handler.sendEmptyMessage(2);
+                                } else {
+                                    Log.d(TAG, "Выгрузка файла " + dlist[i] + " не удалась");
+                                    state = "FAILED";
+                                    //handler.sendEmptyMessage(-1);
+                                }
+                                db.setState(dlist[i], state);
+                            }
+                            else {
+                                Log.d(TAG, dlist[i] + "  УЖЕ БЫЛ ЗАГРУЖЕН");
+                                //doMeta(dlist[i]);
                             }
                         }
+
                         //handler.sendEmptyMessage(0);
                     } else {
                         Log.d(TAG, "Подключиться не удалось");

@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.preference.PreferenceManager;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -21,6 +22,16 @@ import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static MainActivity instance;
+
+    public MainActivity() {
+        instance = this;
+    }
+
+    public static Context getContext() {
+        return instance;
+    }
+
     /**
      * The {@link android.support.v4.view.PagerAdapter} that will provide
      * fragments for each of the sections. We use a
@@ -35,6 +46,8 @@ public class MainActivity extends AppCompatActivity {
      * The {@link ViewPager} that will host the section contents.
      */
     private ViewPager mViewPager;
+
+    private Handler thandler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,12 +90,12 @@ public class MainActivity extends AppCompatActivity {
                 Context c = getBaseContext();
                 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
                 String serverip = prefs.getString(PrefsFragment.PREF_SERVER_IP, "1");
-                FTPUploader._uploadall(serverip);
+                FTPUploader._uploadall(serverip, getApplicationContext());
             }
         });
 
         NetworkUtil.updateStatus(getApplicationContext());
-        //runnable.run();
+        runnable.run();
 
         // TODO :: ПРОВЕРЯТЬ, ПРОИЗОШЁЛ ЛИ ОТВЕТ
         // TODO :: ПЕРЕВОДИТЬ В БЕСШУМНЫЙ
@@ -162,7 +175,24 @@ public class MainActivity extends AppCompatActivity {
             return null;
         }
 
-
     }
+
+    private  Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+            if (NetworkUtil.allowUpload) {
+                Log.d("TIMERHNDLR", "Процедура выгрузки инициирована по таймеру");
+
+                Context c = getApplicationContext();
+                SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(c);
+                String serverip = prefs.getString(PrefsFragment.PREF_SERVER_IP, "1");
+                FTPUploader._uploadall(serverip, c);
+            }
+
+            //DetectConnection.checkInternetConnection(context);
+            // :: Pause ten second to next connection check
+            thandler.postDelayed(this, 60000);
+        }
+    };
 
 }

@@ -93,15 +93,8 @@ public class HistoryObserver extends ContentObserver {
                 cv.put(RecordingProvider.KEY_DATE, dateString);
                 cv.put(RecordingProvider.KEY_TIME, timeString);
 
-                Cursor mCursor = context.getContentResolver().query(Uri.parse(BASE_PATH), null, null, null, null);
-                mCursor.moveToLast();
-                int id = mCursor.getInt(mCursor.getColumnIndex("_id"));
-                String where = RecordingProvider.KEY_ID + " = " + id;
-                int ex = context.getContentResolver().update(RecordingProvider.CONTENT_URI, cv, where, null);
-
-                if (ex != 0) {
-                    Log.e("HISTOBSRVR", "Ошибка обновления данных таблицы записей");
-                }
+                DatabaseHelper db = DatabaseHelper.getInstance(context);
+                db.updateLast(cv);
             }
         }
         managedCursor.close();
